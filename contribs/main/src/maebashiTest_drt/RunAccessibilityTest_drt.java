@@ -66,7 +66,7 @@ public class RunAccessibilityTest_drt {
 	private static final String PLANSFILE = ROOTDIR + "plans_strict_0823.xml";//plans_strict.xml plans_car.xml
 	private static final String FACILITYFILE = ROOTDIR + "Facility.xml";
 
-	private static final int ITERATIONTIMES = 1;
+	private static final int ITERATIONTIMES = 3;
 
 	private static final String TRANSITSCHEDULEFILE = ROOTDIR + "transitSchedule.xml";
 	private static final String TRANSITVEHICLEFILE = ROOTDIR + "transitVehicles.xml";
