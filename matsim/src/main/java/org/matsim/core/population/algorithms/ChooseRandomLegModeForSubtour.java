@@ -20,7 +20,14 @@
 
 package org.matsim.core.population.algorithms;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.matsim.api.core.v01.BasicLocation;
@@ -37,7 +44,7 @@ import org.matsim.core.router.TripStructureUtils.Subtour;
 import org.matsim.core.router.TripStructureUtils.Trip;
 
 /**
- * Changes the transportation mode of one random non-empty subtour in a plan to a randomly chosen
+ * Changes the transportation mode of one random non-empty subtour in a plan to a randomly chosen//one random non-empty subtour ここ大事
  * different mode given a list of possible modes, considering that the means of transport
  * follows the law of mass conservation.
  *
@@ -47,7 +54,7 @@ import org.matsim.core.router.TripStructureUtils.Trip;
 public final class ChooseRandomLegModeForSubtour implements PlanAlgorithm {
 
 	private static Logger logger = Logger.getLogger(ChooseRandomLegModeForSubtour.class);
-	
+
 	private static class Candidate {
 		final Subtour subtour;
 		final String newTransportMode;
@@ -72,7 +79,7 @@ public final class ChooseRandomLegModeForSubtour implements PlanAlgorithm {
 	private PermissibleModesCalculator permissibleModesCalculator;
 
 	private boolean anchorAtFacilities = false;
-	
+
 	public ChooseRandomLegModeForSubtour(
 			final StageActivityTypes stageActivityTypes,
 			final MainModeIdentifier mainModeIdentifier,
@@ -83,10 +90,10 @@ public final class ChooseRandomLegModeForSubtour implements PlanAlgorithm {
 		this.stageActivityTypes = stageActivityTypes;
 		this.mainModeIdentifier = mainModeIdentifier;
 		this.permissibleModesCalculator = permissibleModesCalculator;
-		this.modes = Arrays.asList(modes);
-		this.chainBasedModes = Arrays.asList(chainBasedModes);
+		this.modes = Arrays.asList(modes);//ここがallmode
+		this.chainBasedModes = Arrays.asList(chainBasedModes);//chainmode
 		this.singleTripSubtourModes = this.chainBasedModes;
-		
+
 		this.rng = rng;
 		logger.info("Chain based modes: " + this.chainBasedModes.toString());
 	}
@@ -97,13 +104,13 @@ public final class ChooseRandomLegModeForSubtour implements PlanAlgorithm {
 	 * the modes should be available for such trips (e.g. car-sharing does not make much sense for such a trip),
 	 * thus the list of modes available for single-trip subtours can be specified independently. As mentioned,
 	 * it is initialized by the constructor to the full list of chain based modes.
-	 * 
+	 *
 	 * @param singleTripSubtourModes
 	 */
 	public void setSingleTripSubtourModes(final String[] singleTripSubtourModes) {
 		this.singleTripSubtourModes = Arrays.asList(singleTripSubtourModes);
 	}
-	
+
 	@Override
 	public void run(final Plan plan) {
 		if (plan.getPlanElements().size() <= 1) {
@@ -126,7 +133,7 @@ public final class ChooseRandomLegModeForSubtour implements PlanAlgorithm {
 					permissibleModesForThisPlan);
 
 		if (!choiceSet.isEmpty()) {
-			Candidate whatToDo = choiceSet.get(rng.nextInt(choiceSet.size()));
+			Candidate whatToDo = choiceSet.get(rng.nextInt(choiceSet.size()));//choicesetのうち１つをランダムに選択している
 			applyChange( whatToDo , plan );
 		}
 	}
@@ -134,7 +141,7 @@ public final class ChooseRandomLegModeForSubtour implements PlanAlgorithm {
 	private List<Candidate> determineChoiceSet(
 			final Id<? extends BasicLocation> homeLocation,
 			final List<Trip> trips,
-			final Collection<Subtour> subtours,
+			final Collection<Subtour> subtours,//１つのスケジュールに含まれているsubtourを全て流し込んでいる
 			final Collection<String> permissibleModesForThisPerson) {
 		final ArrayList<Candidate> choiceSet = new ArrayList<Candidate>();
 		for ( Subtour subtour : subtours ) {
@@ -150,7 +157,7 @@ public final class ChooseRandomLegModeForSubtour implements PlanAlgorithm {
 			final Id<? extends BasicLocation> subtourStartLocation = anchorAtFacilities ?
 				subtour.getTrips().get( 0 ).getOriginActivity().getFacilityId() :
 				subtour.getTrips().get( 0 ).getOriginActivity().getLinkId();
-			
+
 			final Collection<String> testingModes =
 				subtour.getTrips().size() == 1 ?
 					singleTripSubtourModes :
@@ -167,25 +174,29 @@ public final class ChooseRandomLegModeForSubtour implements PlanAlgorithm {
 				if (lastDestination != null) {
 					vehicleLocation = getLocationId( lastDestination );
 				}
-				if (vehicleLocation.equals(subtourStartLocation)) {
-					usableChainBasedModes.add(mode);
+				if (vehicleLocation.equals(subtourStartLocation)) {//ここで重要なことをしているが、今はわからない//subtourの開始場所がsubtourStartLocation、それとsubtourのもう片方の目的地が一致していたならmodeを加えると解釈
+					usableChainBasedModes.add(mode);//上の続き、つまり出発地ともう片方の目的地が一致していなければ、必然的にchainではない交通手段が選ばれる
 				}
 			}
-			
+
 			Set<String> usableModes = new LinkedHashSet<>();
 			if (isMassConserving(subtour)) { // We can only replace a subtour if it doesn't itself move a vehicle from one place to another
 				for (String candidate : permissibleModesForThisPerson) {
 					if (chainBasedModes.contains(candidate)) {
-						if (usableChainBasedModes.contains(candidate)) {
+						if (usableChainBasedModes.contains(candidate)) {//falseだったらそのchainmodeは使われないことでchainか否か差別化されている
 							usableModes.add(candidate);
 						}
 					} else {
 						usableModes.add(candidate);
 					}
-				} 
+				}
 			}
-
-			usableModes.remove(getTransportMode(subtour));
+			System.out.println("true//////////////");
+			System.out.println(subtour);
+			System.out.println(usableModes);
+			System.out.println(getTransportMode(subtour));
+			usableModes.remove(getTransportMode(subtour));//ここで0番目の現在用いている交通手段を除いている
+			System.out.println(usableModes);
 			for (String transportMode : usableModes) {
 				choiceSet.add(
 						new Candidate(
@@ -193,7 +204,9 @@ public final class ChooseRandomLegModeForSubtour implements PlanAlgorithm {
 							transportMode ));
 			}
 		}
-		return choiceSet;
+		//System.out.println("true//////////////");
+		//System.out.println(choiceSet);
+		return choiceSet;//subtourと交通手段が結び付けられたチョイスセット（変更可能な組み合わせを弾き出している）//このメソッドは１つのスケジュールに含まれる全てのsubtourを渡されているので、スケジュール単位の数のchoicesetを作っている。
 	}
 
 	private boolean containsUnknownMode(final Subtour subtour) {
@@ -209,7 +222,7 @@ public final class ChooseRandomLegModeForSubtour implements PlanAlgorithm {
 		for (String mode : chainBasedModes) {
 			if (!isMassConserving(subtour, mode)) {
 				return false;
-			} 
+			}
 		}
 		return true;
 	}
@@ -239,7 +252,7 @@ public final class ChooseRandomLegModeForSubtour implements PlanAlgorithm {
 			activity.getFacilityId() :
 			activity.getLinkId();
 	}
-	
+
 	private boolean atSameLocation(Activity firstLegUsingMode,
 			Activity lastLegUsingMode) {
 		return anchorAtFacilities ?
@@ -261,7 +274,7 @@ public final class ChooseRandomLegModeForSubtour implements PlanAlgorithm {
 		}
 		return null;
 	}
-	
+
 	private Activity findFirstOriginOfMode(
 			final List<Trip> tripsToSearch,
 			final String mode) {

@@ -67,7 +67,7 @@ public final class ChooseRandomLegMode implements PlanAlgorithm {
 		changeToRandomLegMode(tour, plan);
 	}
 
-	private void changeToRandomLegMode(final List<PlanElement> tour, final Plan plan) {//YOJIN 自転車の利用可否を追加、randomchange strategyの根幹
+	private void changeToRandomLegMode(final List<PlanElement> tour, final Plan plan) {//YOJIN （もう使われていない、changetripmode）自転車の利用可否を追加、randomchange strategyの根幹
 		if (tour.size() > 1) {
 			boolean forbidCar = false;
 			//System.out.println("true//////////////////////////////////////////////////////////////");
@@ -89,6 +89,8 @@ public final class ChooseRandomLegMode implements PlanAlgorithm {
 
 
 			final String currentMode = getTransportMode(tour);
+			//System.out.println("true//////////////////////////");
+			//System.out.println("old"+tour);//tourとは1日全てのトリップ情報を含んでいると判明
 			//System.out.println(currentMode);
 
 			String newMode;
@@ -144,13 +146,14 @@ public final class ChooseRandomLegMode implements PlanAlgorithm {
 				}
 			}
 			*/
-
-			changeLegModeTo(tour, newMode);
+			//System.out.println(newMode);
+			//changeLegModeTo(tour, newMode);
+			//System.out.println("new"+tour);
 		}
 	}
 
 	private String getTransportMode(final List<PlanElement> tour) {
-		return ((Leg) (tour.get(1))).getMode();
+		return ((Leg) (tour.get(1))).getMode();//１つ目のトリップの交通手段のみを取り出している
 	}
 
 	private void changeLegModeTo(final List<PlanElement> tour, final String newMode) {

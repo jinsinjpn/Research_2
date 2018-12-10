@@ -25,13 +25,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-
 import org.matsim.api.core.v01.TransportMode;
 import org.matsim.api.core.v01.population.Person;
 import org.matsim.api.core.v01.population.Plan;
 import org.matsim.core.population.PersonUtils;
 
-public final class PermissibleModesCalculatorImpl implements PermissibleModesCalculator {
+public final class PermissibleModesCalculatorImpl implements PermissibleModesCalculator {//YOJIN bikeの利用可否（subtour)
 	private final List<String> availableModes;
 	private final List<String> availableModesWithoutCar;
 	private final List<String> availableModesWithoutBicyc;

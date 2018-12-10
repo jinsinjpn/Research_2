@@ -20,6 +20,11 @@
 
 package org.matsim.core.replanning.modules;
 
+import java.lang.Thread.UncaughtExceptionHandler;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+
 import org.apache.log4j.Logger;
 import org.matsim.api.core.v01.population.Plan;
 import org.matsim.api.core.v01.replanning.PlanStrategyModule;
@@ -27,11 +32,6 @@ import org.matsim.core.config.groups.GlobalConfigGroup;
 import org.matsim.core.population.algorithms.PlanAlgorithm;
 import org.matsim.core.replanning.ReplanningContext;
 import org.matsim.core.utils.misc.Counter;
-
-import java.lang.Thread.UncaughtExceptionHandler;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * An abstract strategy module for running multiple plan algorithms in parallel.
@@ -89,7 +89,7 @@ abstract public class AbstractMultithreadedModule implements PlanStrategyModule 
 	public AbstractMultithreadedModule(final int numOfThreads) {
 		this.numOfThreads = numOfThreads;
 	}
-	
+
 	protected void beforePrepareReplanningHook(@SuppressWarnings("unused") ReplanningContext replanningContextTmp) {
 		// left empty for inheritance
 	}
@@ -131,11 +131,11 @@ abstract public class AbstractMultithreadedModule implements PlanStrategyModule 
 	protected void afterFinishReplanningHook() {
 		// left empty for inheritance
 	}
-	
+
 	@Override
 	public final void finishReplanning() {
 		this.beforeFinishReplanningHook();
-		
+
 		if (this.directAlgo == null) {
 			// only try to start threads if we did not directly work on all the plans
 			log.info("[" + this.name + "] starting " + this.threads.length + " threads, handling " + this.count + " plans");
@@ -164,7 +164,7 @@ abstract public class AbstractMultithreadedModule implements PlanStrategyModule 
 		this.threads = null;
 		this.replanningContext = null;
 		this.count = 0;
-		
+
 		this.afterFinishReplanningHook();
 	}
 
@@ -230,7 +230,7 @@ abstract public class AbstractMultithreadedModule implements PlanStrategyModule 
 
 		@Override
 		public void run() {
-			for (Plan plan : this.plans) {
+			for (Plan plan : this.plans) {//YOJIN plan生成探り中
 				this.planAlgo.run(plan);
 				this.counter.incCounter();
 			}

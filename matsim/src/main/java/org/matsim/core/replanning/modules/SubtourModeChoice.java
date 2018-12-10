@@ -68,7 +68,7 @@ public class SubtourModeChoice extends AbstractMultithreadedModule {
 
 	public SubtourModeChoice(
 			final int numberOfThreads,
-			final String[] modes,
+			final String[] modes,//利用可否のキー
 			final String[] chainBasedModes,
 			final boolean considerCarAvailability, Provider<TripRouter> tripRouterProvider) {
 		super(numberOfThreads);

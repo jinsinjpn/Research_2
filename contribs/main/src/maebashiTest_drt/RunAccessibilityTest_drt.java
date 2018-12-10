@@ -59,14 +59,14 @@ import org.matsim.vis.otfvis.OTFVisConfigGroup;
 
 public class RunAccessibilityTest_drt {
 
-	private static final String ROOTDIR = "/Users/jo/git/matsim/contribs/UT_MATSim/resources/Numata_1014/";
+	private static final String ROOTDIR = "/Users/jo/git/matsim/contribs/UT_MATSim/resources/Numata_1208/";
 	private static final String OUTPUTDIR = ROOTDIR + "output";
-	private static final String CONFIGFILE = ROOTDIR + "config_oldcar_1014.xml";//config_strict.xml config_car200.xml
+	private static final String CONFIGFILE = ROOTDIR + "config_oldcar_1208.xml";//config_strict.xml config_car200.xml
 	private static final String NETWORKFILE = ROOTDIR + "Network.xml";
 	private static final String PLANSFILE = ROOTDIR + "plans_strict_0823.xml";//plans_strict.xml plans_car.xml
 	private static final String FACILITYFILE = ROOTDIR + "Facility.xml";
 
-	private static final int ITERATIONTIMES = 3;
+	private static final int ITERATIONTIMES = 300;
 
 	private static final String TRANSITSCHEDULEFILE = ROOTDIR + "transitSchedule.xml";
 	private static final String TRANSITVEHICLEFILE = ROOTDIR + "transitVehicles.xml";
@@ -129,16 +129,18 @@ public class RunAccessibilityTest_drt {
 		config.travelTimeCalculator().setSeparateModes(true);
 		if(allpav_on2) {
 			config.qsim().setFlowCapFactor(0.0261);//下の割る０.８
+			config.qsim().setStorageCapFactor(0.0261);
 		}
 		else {
 		config.qsim().setFlowCapFactor(0.0209);
+		config.qsim().setStorageCapFactor(0.0209);
 		}
 
 		// config.qsim().setRemoveStuckVehicles(true);
 
 		// a subtour is any sequence of trips which starts and ends at the same location
-		//config.subtourModeChoice().setConsiderCarAvailability(true);
-		// config.subtourModeChoice().setChainBasedModes("car, bike, pav");
+		config.subtourModeChoice().setConsiderCarAvailability(true);
+		// config.subtourModeChoice().setChainBasedModes("car, bike, pav");//defaultがcarとbike
 		// config.subtourModeChoice().setModes("car, bike, pav, walk, taxi");
 
 		// ----------------for drt-------------------------------------
@@ -306,6 +308,7 @@ public class RunAccessibilityTest_drt {
 
 		config.changeMode().setModes(modesChanged);
 		config.subtourModeChoice().setModes(modesChanged);;
+		//config.subtourModeChoice().setChainBasedModes(modesChanged);//使わない方が無難だと思った
 		// ---------------------simulation
 		// loading---------------------------------------
 

@@ -140,7 +140,7 @@ public final class ConfigConsistencyCheckerImpl implements ConfigConsistencyChec
 				config.controler().getRoutingAlgorithmType() != RoutingAlgorithmType.Dijkstra ) {
 			log.warn("We don't know if non-Dijkstra routing works together with LinkToLink routing.");
 		}
-		
+
 	}
 
 
