@@ -57,7 +57,7 @@ import org.matsim.vehicles.VehicleType;
 import org.matsim.vehicles.VehicleTypeImpl;
 import org.matsim.vis.otfvis.OTFVisConfigGroup;
 
-public class RunAccessibilityTest_drt {
+public class RunAccessibilityTest_drt {//
 
 	private static final String ROOTDIR = "/Users/jo/git/matsim/contribs/UT_MATSim/resources/Numata_1208/";
 	private static final String OUTPUTDIR = ROOTDIR + "output";
